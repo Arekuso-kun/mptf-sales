@@ -10,8 +10,14 @@
         width: '100%',
         type: 'pie'
       },
+      theme: {
+        monochrome: {
+          enabled: true,
+          color: '#4f46e5'
+        }
+      },
       stroke: {
-        colors: ['transparent'],
+        colors: ['#0f172a'],
       },
       plotOptions: {
         pie: {
@@ -28,7 +34,7 @@
         }
       },
       legend: {
-        position: 'bottom',
+        position: 'right',
         fontFamily: 'Inter, sans-serif',
         labels: {
           useSeriesColors: true

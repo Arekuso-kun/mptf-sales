@@ -14,6 +14,12 @@
           show: false
         }
       },
+      theme: {
+        monochrome: {
+          enabled: true,
+          color: '#4f46e5'
+        }
+      },
       tooltip: {
         enabled: true,
         theme: "dark",
@@ -48,13 +54,11 @@
       series: [
         {
           name: 'Sales',
-          data: [6500, 5418, 4456, 6526, 5356, 6456],
-          color: '#a5b4fc'
+          data: [6500, 5418, 4456, 6526, 5356, 6456]
         },
         {
           name: 'Items sold',
-          data: [4650, 3618, 5646, 6126, 4356, 3456],
-          color: '#4338ca'
+          data: [4650, 3618, 5646, 6126, 4356, 3456]
         }
       ],
       legend: {

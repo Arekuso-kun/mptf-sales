@@ -153,7 +153,12 @@
 </div>
 
 {#if testBool == true}
-    <div class="grid grid-cols-3 grid-rows-[repeat(4,_minmax(0,_300px)] gap-4 p-8">
+    <div class="grid grid-cols-4 grid-rows-[repeat(4,_minmax(0,_300px)] gap-4 p-8">
+        <GridContainer title="Items pie chart" extraClass="col-span-3 row-span-2">
+            <ChartPieOutline slot="icon"/>
+            <ItemsChart/>
+        </GridContainer>
+
         <GridContainer title="Total sales">
             <CashOutline slot="icon"/>
             <p class="text-5xl font-semibold mb-3">$2,109.00</p>
@@ -166,17 +171,12 @@
             <p class="text-xl font-semibold text-slate-400">201 unique items</p>
         </GridContainer>
 
-        <GridContainer title="Items pie chart" extraClass="row-span-3">
-            <ChartPieOutline slot="icon"/>
-            <ItemsChart/>
-        </GridContainer>
-        
-       <GridContainer title="Sales chart" extraClass="col-span-2 row-span-2">
+       <GridContainer title="Sales chart" extraClass="col-span-4 row-span-2">
             <ChartOutline slot="icon"/>
             <SalesChart/>
         </GridContainer>
 
-        <GridContainer title="Achivements" extraClass="col-span-3">
+        <GridContainer title="Achivements" extraClass="col-span-4">
             <BadgeCheckOutline slot="icon"/>
             <div class="flex flex-col gap-6">
                 <Achivement text_achivement="Most sales in one day" text_value="$113.99" text_date="15 January 2022"/>
