@@ -20,7 +20,7 @@
     <Hr classHr="w-12 h-1 m-0 rounded" />
 
     <Badge color="indigo" border>
-        <ClockSolid class="w-3 h-3 me-3" />
+        <ClockSolid class="w-4 h-4 me-2" />
         <span class="text-lg">
             {text_date}
         </span>

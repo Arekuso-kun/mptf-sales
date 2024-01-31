@@ -1,20 +1,15 @@
 <script lang="ts">
     import {
-        Button,
         DarkMode,
-        Fileupload,
         GradientButton,
-        Heading,
         Dropzone,
-        P,
-        Hr,
-        Badge,
+        Popover,
     } from "flowbite-svelte";
     import Papa from "papaparse";
     import GridContainer from "./GridContainer.svelte";
     import SalesChart from "./SalesChart.svelte";
     import ItemsChart from "./ItemsChart.svelte";
-    import { CashOutline, FileChartBarOutline, ChartOutline, ChartPieOutline, BadgeCheckOutline, ClockSolid } from 'flowbite-svelte-icons';
+    import { CashOutline, FileChartBarOutline, ChartOutline, ChartPieOutline, BadgeCheckOutline, ClockOutline, QuestionCircleSolid } from 'flowbite-svelte-icons';
     import Achivement from "./Achivement.svelte";
 
     interface CsvRow {
@@ -119,7 +114,6 @@
     let test = "h-[600px] w-[600px] rounded-[36px]";
     let test2 = "h-screen";
     let testBool = false;
-    let gridTest = "p-4 rounded-lg bg-slate-900"
 </script>
 
 <div class="absolute top-2 right-2">
@@ -153,35 +147,53 @@
 </div>
 
 {#if testBool == true}
-    <div class="grid grid-cols-4 grid-rows-[repeat(4,_minmax(0,_300px)] gap-4 p-8">
-        <GridContainer title="Items pie chart" extraClass="col-span-3 row-span-2">
+    <div class="grid grid-cols-4 grid-rows-7 gap-4 p-8">
+        <GridContainer title="Items pie chart" extraClass="col-span-3 row-span-3">
             <ChartPieOutline slot="icon"/>
             <ItemsChart/>
         </GridContainer>
 
         <GridContainer title="Total sales">
             <CashOutline slot="icon"/>
-            <p class="text-5xl font-semibold mb-3">$2,109.00</p>
-            <p class="text-xl font-semibold text-slate-400">Fees: $300.00</p>
+            <p class="text-5xl font-semibold mb-3 mr-8">$2,109.00</p>
+            <p class="text-xl font-semibold text-slate-400">$300.00 fees</p>
         </GridContainer>
         
         <GridContainer title="Items sold">
             <FileChartBarOutline slot="icon"/>
-            <p class="text-5xl font-semibold mb-3">294 items</p>
+            <p class="text-5xl font-semibold mb-3 mr-8">294 items</p>
             <p class="text-xl font-semibold text-slate-400">201 unique items</p>
         </GridContainer>
 
-       <GridContainer title="Sales chart" extraClass="col-span-4 row-span-2">
+        <GridContainer title="Since first trade">
+            <ClockOutline slot="icon"/>
+            <p class="text-5xl font-semibold mb-3 mr-8">294 days</p>
+            <div class="flex flex-row items-center justify-between">
+                <p class="text-xl font-semibold text-slate-400">159 active days</p>
+                <button id="b3">
+                    <QuestionCircleSolid class="w-4 h-4 ms-1.5" />
+                    <span class="sr-only">Show information</span>
+                </button>
+                <Popover triggeredBy="#b3" placement="bottom-start">
+                    <div class="p-3 space-y-2">
+                      <h3 class="font-semibold text-gray-900 dark:text-white">Active days</h3>
+                      These are days with at least one item sold.
+                    </div>
+                </Popover>
+            </div>
+        </GridContainer>
+
+       <GridContainer title="Sales chart" extraClass="col-span-4 row-span-3">
             <ChartOutline slot="icon"/>
             <SalesChart/>
         </GridContainer>
 
         <GridContainer title="Achivements" extraClass="col-span-4">
             <BadgeCheckOutline slot="icon"/>
-            <div class="flex flex-col gap-6">
+            <div class="space-y-6">
                 <Achivement text_achivement="Most sales in one day" text_value="$113.99" text_date="15 January 2022"/>
-    
                 <Achivement text_achivement="Most items sold in one day" text_value="205 items" text_date="7 January 2022"/>
+                <Achivement text_achivement="Most expensive item sold" text_value="Nutcracker Mk.II War Paint (Factory New) - $2.54" text_date="29 August 2022"/>
             </div>
         </GridContainer>
     </div>

@@ -32,7 +32,32 @@ body {
     @apply dark:bg-slate-950 bg-slate-50 dark:text-slate-100 text-slate-900;
 }
 
-/* .apexcharts-tooltip {
-    background: orange;
-    color: orange;
-  } */
+/* Apexcharts tooltip color */
+.apexcharts-tooltip {
+    box-shadow: 2px 2px 6px -4px #000 !important;
+    background: rgba(2, 6, 23, 0.75) !important;
+}
+
+/* Apexcharts xaxistooltip color */
+.apexcharts-xaxistooltip.apexcharts-theme-dark {
+    box-shadow: 2px 2px 6px -4px #000 !important;
+    background: rgba(2, 6, 23, 0.75) !important;
+    border-radius: 5px !important;
+}
+
+/* Apexcharts labels color */
+text {
+    fill: rgb(241 245 249);
+}
+
+/* Apexcharts toolbox selected svg color */
+.apexcharts-canvas .apexcharts-reset-zoom-icon.apexcharts-selected svg, 
+.apexcharts-canvas .apexcharts-selection-icon.apexcharts-selected svg, 
+.apexcharts-canvas .apexcharts-zoom-icon.apexcharts-selected svg {
+    fill: rgb(104 117 245) !important;
+}
+
+/* Apexcharts toolbox selected svg color */
+.apexcharts-pan-icon.apexcharts-selected svg {
+    stroke: rgb(104 117 245) !important;
+}

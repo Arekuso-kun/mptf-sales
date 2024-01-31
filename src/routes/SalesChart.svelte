@@ -1,106 +1,76 @@
 <script lang="ts">
-    import { Chart, Card, A, Button, Dropdown, DropdownItem } from 'flowbite-svelte';
-    import { ChevronRightSolid, ChevronDownSolid } from 'flowbite-svelte-icons';
-  
-    let options: ApexCharts.ApexOptions = {
-      chart: {
-        height: 405,
-        type: 'area',
-        fontFamily: 'Inter, sans-serif',
-        dropShadow: {
-          enabled: false
-        },
-        toolbar: {
-          show: false
-        }
-      },
-      theme: {
-        monochrome: {
-          enabled: true,
-          color: '#4f46e5'
-        }
-      },
-      tooltip: {
+  import { Chart, Button, Dropdown, DropdownItem } from 'flowbite-svelte';
+  import { ChevronDownSolid } from 'flowbite-svelte-icons';
+
+  const options: ApexCharts.ApexOptions = {
+    chart: {
+      height: 460,
+      type: 'area'
+    },
+    theme: {
+      monochrome: {
         enabled: true,
-        theme: "dark",
-        x: {
-          show: false
-        }
-      },
-      fill: {
-        type: 'gradient',
-        gradient: {
-          opacityFrom: 0.55,
-          opacityTo: 0,
-          shade: '#1C64F2',
-          gradientToColors: ['#1C64F2']
-        }
-      },
-      dataLabels: {
-        enabled: false
-      },
-      stroke: {
-        width: 6
-      },
-      grid: {
-        show: false,
-        strokeDashArray: 4,
-        padding: {
-          left: 2,
-          right: 2,
-          top: 0
-        }
-      },
-      series: [
-        {
-          name: 'Sales',
-          data: [6500, 5418, 4456, 6526, 5356, 6456]
-        },
-        {
-          name: 'Items sold',
-          data: [4650, 3618, 5646, 6126, 4356, 3456]
-        }
-      ],
-      legend: {
-        position: 'bottom',
-        fontFamily: 'Inter, sans-serif',
-        labels: {
-          useSeriesColors: true
-        }
-      },
-      xaxis: {
-        categories: ['01 February', '02 February', '03 February', '04 February', '05 February', '06 February', '07 February'],
-        labels: {
-          show: false
-        },
-        axisBorder: {
-          show: false
-        },
-        axisTicks: {
-          show: false
-        }
-      },
-      yaxis: {
-        show: false
+        color: '#4f46e5'
       }
-    };
-  </script>
-  
-  
-  <Chart {options} />
-  
-  <div class="flex justify-between items-center pt-5">
-    <Button class="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 text-center 
-    inline-flex items-center dark:hover:text-white bg-transparent hover:bg-transparent dark:bg-transparent 
-    dark:hover:bg-transparent focus:ring-transparent dark:focus:ring-transparent py-0">
-      Daily
-      <ChevronDownSolid class="w-2.5 m-2.5 ms-1.5" />
-    </Button>
-    <Dropdown class="w-40" offset={-6}>
-      <DropdownItem>Daily</DropdownItem>
-      <DropdownItem>Weekly</DropdownItem>
-      <DropdownItem>Monthly</DropdownItem>
-      <DropdownItem>Yearly</DropdownItem>
-    </Dropdown>
-  </div>
+    },
+    tooltip: {
+      enabled: true,
+      theme: 'dark',
+      x: {
+        show: false,
+        format: 'dd MMM yyyy'
+      }
+    },
+    fill: {
+      type: 'gradient',
+      gradient: {
+        opacityFrom: 0.6,
+        opacityTo: 0
+      }
+    },
+    dataLabels: {
+      enabled: false
+    },
+    grid: {
+      show: false
+    },
+    series: [
+      {
+        name: 'Sales',
+        data: [20.95, 51.34, 31.18]
+      },
+      {
+        name: 'Items sold',
+        data: [40, 14, 97]
+      }
+    ],
+    legend: {
+      position: 'top',
+      labels: {
+        useSeriesColors: true
+      }
+    },
+    xaxis: {
+      type: 'datetime',
+      categories: [1327359600000, 1327446000000, 1327532400000]
+    }
+  };
+</script>
+
+<Chart class="text-slate-900" {options} />
+
+<div class="flex justify-between items-center pt-5">
+  <Button class="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 
+  text-center inline-flex items-center dark:hover:text-white bg-transparent hover:bg-transparent 
+  dark:bg-transparent dark:hover:bg-transparent focus:ring-transparent dark:focus:ring-transparent py-0">
+    Daily
+    <ChevronDownSolid class="w-2.5 m-2.5 ms-1.5" />
+  </Button>
+  <Dropdown class="w-40" offset={-6}>
+    <DropdownItem>Daily</DropdownItem>
+    <DropdownItem>Weekly</DropdownItem>
+    <DropdownItem>Monthly</DropdownItem>
+    <DropdownItem>Yearly</DropdownItem>
+  </Dropdown>
+</div>
    
