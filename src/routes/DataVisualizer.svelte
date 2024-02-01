@@ -3,7 +3,9 @@
         DarkMode, 
         GradientButton, 
         Dropzone, 
-        Popover } from "flowbite-svelte";
+        Popover, 
+        List,
+        Li} from "flowbite-svelte";
 
     import { 
         CashOutline, 
@@ -25,7 +27,6 @@
 
     import { 
         reformatDates,
-        formatDate,
         countDifferentDays, 
         countItemOccurrences, 
         getLastItemDayDifference, 
@@ -151,7 +152,24 @@
     {animationHide ? "h-0 w-0 rounded-[300px]" : "h-[600px] w-[600px] rounded-[36px]"}">
         <div class="flex-none flex flex-col items-center justify-center gap-10 bg-slate-900 h-[600px] w-[600px] p-10">
             <p class="text-5xl font-semibold">Upload CSV file</p>
-            <p class="text-slate-400">How do I get the file?</p>
+            <div class="flex flex-row">
+                <p class="text-slate-400">How do I get the file?</p>
+                <button id="b-how">
+                    <QuestionCircleSolid class="w-4 h-4 ms-1.5" />
+                    <span class="sr-only">Show information</span>
+                </button>
+            </div>
+            <Popover triggeredBy="#b-how" placement="bottom-start">
+                <div class="p-3 space-y-2">
+                  <h3 class="font-semibold text-gray-900 dark:text-white">How do I get the file?</h3>
+                  <List list="decimal">
+                    <Li>Go to <a class="font-semibold underline text-indigo-400 hover:text-indigo-500" href="https://marketplace.tf/dashboard#sales">marketplace.tf/dashboard#sales</a></Li>
+                    <Li>Click 'Download CSV'</Li>
+                    <Li>Select 'Items' as the 'View' option</Li>
+                    <Li>Click 'Generate CSV'</Li>
+                  </List>
+                </div>
+            </Popover>
     
             <Dropzone accept=".csv" on:drop={dropHandle}
                 on:dragover={(event) => {event.preventDefault();}}
@@ -215,11 +233,11 @@
                     {countDifferentDays(csvData)} active days
                 </p>
 
-                <button id="b3">
+                <button id="b-active-days">
                     <QuestionCircleSolid class="w-4 h-4 ms-1.5" />
                     <span class="sr-only">Show information</span>
                 </button>
-                <Popover triggeredBy="#b3" placement="bottom-start">
+                <Popover triggeredBy="#b-active-days" placement="bottom-start">
                     <div class="p-3 space-y-2">
                       <h3 class="font-semibold text-gray-900 dark:text-white">Active days</h3>
                       These are days with at least one item sold.
