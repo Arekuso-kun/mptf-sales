@@ -19,7 +19,7 @@
     import GridContainer from "./GridContainer.svelte";
     import SalesChart from "./SalesChart.svelte";
     import ItemsChart from "./ItemsChart.svelte";
-    import Achivement from "./Achivement.svelte";
+    import Achivement from "./Achievement.svelte";
 
     import type { CsvRow } from './data-analyzer';
 
@@ -236,7 +236,7 @@
                 items_yearly={getPriceSumAndItemCount(csvData, 'yearly')}/>
         </GridContainer>
 
-        <GridContainer title="Achivements" extraClass="col-span-4">
+        <GridContainer title="Achievements" extraClass="col-span-4">
             <BadgeCheckOutline slot="icon"/>
             <div class="space-y-6">
                 <Achivement 
