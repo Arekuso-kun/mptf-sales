@@ -1,5 +1,5 @@
 <script lang="ts">
-    import DataAnalyzer from "./DataAnalyzer.svelte";
+    import DataAnalyzer from "./DataVisualizer.svelte";
 </script>
 
 <div>

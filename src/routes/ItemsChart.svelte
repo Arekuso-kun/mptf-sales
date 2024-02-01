@@ -1,15 +1,60 @@
 <script lang="ts">
-  import { Chart, Button, Dropdown, DropdownItem } from 'flowbite-svelte';
-  import { ChevronDownSolid } from 'flowbite-svelte-icons';
+  import { Chart, Button, ButtonGroup } from 'flowbite-svelte';
 
-  const options: ApexCharts.ApexOptions = {
-    series: [92, 87, 76, 63, 55, 42, 38, 29, 18, 15],
+  export let items: [string, number][]; 
+
+  let statusPie: boolean;
+  let statusBar: boolean;
+
+  let selectedChart = 'bar';
+
+  const handleChartChange = (value: string) => {
+    selectedChart = value;
+  };
+
+  const bar_options: ApexCharts.ApexOptions = {
+    series: [{
+      data: items.map(([_, num]) => num)
+    }],
     chart: {
       height: 460,
       width: '100%',
-      type: 'pie'
+      type: 'bar',
+      background: '#00000000'
     },
     theme: {
+      mode: 'dark',
+      monochrome: {
+        enabled: true,
+        color: '#4f46e5'
+      }
+    },
+    tooltip: {
+      enabled: false
+    },
+    grid: {
+      show: false
+    },
+    plotOptions: {
+      bar: {
+        horizontal: true,
+      }
+    },
+    xaxis: {
+      categories: items.map(([str, _]) => str)
+    }
+  };
+
+  const pie_options: ApexCharts.ApexOptions = {
+    series: items.map(([_, num]) => num),
+    chart: {
+      height: 460,
+      width: '100%',
+      type: 'pie',
+      background: '#00000000'
+    },
+    theme: {
+      mode: 'dark',
       monochrome: {
         enabled: true,
         color: '#4f46e5'
@@ -25,28 +70,57 @@
         }
       }
     },
-    labels: ['Mann Co. Supply Crate Key', 'Taunt: The Schadenfreude', 'Refined Metal'],
+    tooltip: {
+      shared: true
+    },
+    dataLabels: {
+      formatter: (val: number, opts) => {
+        const name = opts.w.globals.labels[opts.seriesIndex];
+        return name + ' ' + val.toFixed(1) + '%'
+      }
+    },
+    labels: items.map(([str, _]) => str),
     legend: {
       position: 'right',
       horizontalAlign: 'center',
       fontSize: '14',
       labels: {
         useSeriesColors: true
+      },
+      formatter: function(seriesName, opts) {
+        return seriesName + ': ' + opts.w.globals.series[opts.seriesIndex];
       }
     }
   };
+
+  $: {
+    statusPie = false;
+    statusBar = false;
+    
+    if (selectedChart == 'pie') {
+      statusPie = true;
+    }
+    
+    if (selectedChart == 'bar') {
+      statusBar = true;
+    }
+  }
 </script>
 
-<Chart {options} />
+{#if selectedChart == 'pie'}
+  <Chart class="text-slate-900" options={pie_options} />
+{:else if selectedChart == 'bar'} 
+  <Chart class="text-slate-900" options={bar_options} />
+{/if}
 
-<div class="flex justify-between items-center pt-5">
-  <Button class="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 
-  text-center inline-flex items-center dark:hover:text-white bg-transparent hover:bg-transparent 
-  dark:bg-transparent dark:hover:bg-transparent focus:ring-transparent dark:focus:ring-transparent py-0">
-    Placeholder
-    <ChevronDownSolid class="w-2.5 m-2.5 ms-1.5" />
-  </Button>
-  <Dropdown class="w-40" offset={-6}>
-    <DropdownItem>Placeholder</DropdownItem>
-  </Dropdown>
+<div class="flex justify-between items-center pt-5 pl-5">
+  <ButtonGroup>
+    <Button on:click={() => handleChartChange('pie')} disabled={statusPie}>
+      Pie chart
+    </Button>
+  
+    <Button on:click={() => handleChartChange('bar')} disabled={statusBar}>
+      Bar chart
+    </Button>
+  </ButtonGroup>
 </div>

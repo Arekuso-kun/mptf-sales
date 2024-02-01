@@ -1,40 +1,51 @@
 <script lang="ts">
-    import {
-        DarkMode,
-        GradientButton,
-        Dropzone,
-        Popover,
-    } from "flowbite-svelte";
+    import { 
+        DarkMode, 
+        GradientButton, 
+        Dropzone, 
+        Popover } from "flowbite-svelte";
+
+    import { 
+        CashOutline, 
+        FileChartBarOutline, 
+        ChartOutline, 
+        ChartPieOutline, 
+        BadgeCheckOutline, 
+        ClockOutline, 
+        QuestionCircleSolid } from 'flowbite-svelte-icons';
+    
     import Papa from "papaparse";
+    
     import GridContainer from "./GridContainer.svelte";
     import SalesChart from "./SalesChart.svelte";
     import ItemsChart from "./ItemsChart.svelte";
-    import { CashOutline, FileChartBarOutline, ChartOutline, ChartPieOutline, BadgeCheckOutline, ClockOutline, QuestionCircleSolid } from 'flowbite-svelte-icons';
     import Achivement from "./Achivement.svelte";
 
-    interface CsvRow {
-        name: string;
-        sku: string;
-        orderid: string;
-        date: string;
-        status: string;
-        price: number;
-        net: number;
-        fee: number;
-    }
+    import type { CsvRow } from './data-analyzer';
+
+    import { 
+        countDifferentDays, 
+        countItemOccurrences, 
+        getLastItemDayDifference, 
+        getTotalFees, 
+        getTotalSales,
+        getPriceSumAndItemCount } from './data-analyzer';
 
     let csvData: CsvRow[] = [];
     let fileName = "";
 
-    function delay(ms: number) {
+    let showDataButton: boolean = true;
+
+    function sleep(ms: number) {
         return new Promise( resolve => setTimeout(resolve, ms) );
     }
 
     /**
      * Gets the user's loaded csv file and parse it
+     * ! 'csvData' variable outside function
      * @param file User's loaded file
      */
-    const parseCSV = (file: File) => {
+     function parseCSV(file: File) {
         const config: Papa.ParseConfig = {
             header: true,
             dynamicTyping: true,
@@ -44,6 +55,7 @@
                         (cell) => cell !== null && cell !== "",
                     ),
                 );
+                showDataButton = false;
             },
         };
 
@@ -70,12 +82,13 @@
      * Handle user's file input
      * @param event
      */
-    const handleFileChange = (event: Event) => {
+     function handleFileChange(event: Event) {
         const inputElement = event.target as HTMLInputElement;
         const file = inputElement.files?.[0];
 
         if (file) {
             parseCSV(file);
+            fileName = file.name;
         }
     };
 
@@ -83,15 +96,12 @@
      * Handle user's file drop input
      * @param event
      */
-    const dropHandle = (event: DragEvent) => {
+     function dropHandle(event: DragEvent) {
         event.preventDefault();
-
-        console.log(event);
 
         if(!event.dataTransfer) return;
         
         [...event.dataTransfer.items].forEach((item, i) => {
-            console.log(item);
             if (item.kind === "file") {
                 const file = item.getAsFile();
                 if(!file) return;
@@ -99,29 +109,30 @@
                 fileName = file.name;
             }
         });
-
-        console.log(event);
     };
 
-    const animation = async() => {
-        test = "h-0 w-0 rounded-[300px]";
-        await delay(1000);
-        test2 = "h-0";
-        testBool = true;
+    let animationHide: boolean = false;
+    let animationReveal: boolean = false;
+    let showDataToggle = false;
+
+    /**
+     * Performs transition animation.
+     */
+    const transitionAnimation = async() => {
+        animationHide = true;
+        await sleep(1000);
+        animationReveal = true;
+        showDataToggle = true;
     };
-
-
-    let test = "h-[600px] w-[600px] rounded-[36px]";
-    let test2 = "h-screen";
-    let testBool = false;
 </script>
 
 <div class="absolute top-2 right-2">
     <DarkMode />
 </div>
 
-<div class="flex flex-col justify-center transition-all duration-1000 ease-in-out {test2}">
-    <div class="flex flex-col items-center justify-center overflow-hidden transition-all duration-1000 ease-in-out {test}">
+<div class="flex flex-col justify-center transition-all duration-1000 ease-in-out {animationReveal ? "h-0" : "h-screen"}">
+    <div class="flex flex-col items-center justify-center overflow-hidden transition-all duration-1000 ease-in-out 
+    {animationHide ? "h-0 w-0 rounded-[300px]" : "h-[600px] w-[600px] rounded-[36px]"}">
         <div class="flex-none flex flex-col items-center justify-center gap-10 bg-slate-900 h-[600px] w-[600px] p-10">
             <p class="text-5xl font-semibold">Upload CSV file</p>
             <p class="text-slate-400">How do I get the file?</p>
@@ -139,37 +150,55 @@
                 {/if}
             </Dropzone>
     
-            <GradientButton shadow color="purpleToBlue" size="xl" on:click={animation}>
+            <GradientButton disabled={showDataButton} shadow color="purpleToBlue" size="xl" on:click={transitionAnimation}>
                 Show data
             </GradientButton>
         </div>
     </div>
 </div>
 
-{#if testBool == true}
+{#if showDataToggle == true}
     <div class="grid grid-cols-4 grid-rows-7 gap-4 p-8">
-        <GridContainer title="Items pie chart" extraClass="col-span-3 row-span-3">
+        <GridContainer title="Top 10 most sold items" extraClass="col-span-3 row-span-3">
             <ChartPieOutline slot="icon"/>
-            <ItemsChart/>
+            <ItemsChart items={countItemOccurrences(csvData, 10)}/>
         </GridContainer>
 
         <GridContainer title="Total sales">
             <CashOutline slot="icon"/>
-            <p class="text-5xl font-semibold mb-3 mr-8">$2,109.00</p>
-            <p class="text-xl font-semibold text-slate-400">$300.00 fees</p>
+
+            <p class="text-5xl font-semibold mb-3 mr-8">
+                ${getTotalSales(csvData)}
+            </p>
+
+            <p class="text-xl font-semibold text-slate-400">
+                ${getTotalFees(csvData)} fees
+            </p>
         </GridContainer>
         
         <GridContainer title="Items sold">
             <FileChartBarOutline slot="icon"/>
-            <p class="text-5xl font-semibold mb-3 mr-8">294 items</p>
-            <p class="text-xl font-semibold text-slate-400">201 unique items</p>
+
+            <p class="text-5xl font-semibold mb-3 mr-8">
+                {csvData.length} items
+            </p>
+
+            <p class="text-xl font-semibold text-slate-400">
+                {countItemOccurrences(csvData).length} unique items
+            </p>
         </GridContainer>
 
         <GridContainer title="Since first trade">
             <ClockOutline slot="icon"/>
-            <p class="text-5xl font-semibold mb-3 mr-8">294 days</p>
+            <p class="text-5xl font-semibold mb-3 mr-8">
+                {getLastItemDayDifference(csvData)} days
+            </p>
+
             <div class="flex flex-row items-center justify-between">
-                <p class="text-xl font-semibold text-slate-400">159 active days</p>
+                <p class="text-xl font-semibold text-slate-400">
+                    {countDifferentDays(csvData)} active days
+                </p>
+
                 <button id="b3">
                     <QuestionCircleSolid class="w-4 h-4 ms-1.5" />
                     <span class="sr-only">Show information</span>
@@ -185,7 +214,10 @@
 
        <GridContainer title="Sales chart" extraClass="col-span-4 row-span-3">
             <ChartOutline slot="icon"/>
-            <SalesChart/>
+            <SalesChart 
+                items_daily={getPriceSumAndItemCount(csvData, 'daily')}
+                items_monthly={getPriceSumAndItemCount(csvData, 'monthly')}
+                items_yearly={getPriceSumAndItemCount(csvData, 'yearly')}/>
         </GridContainer>
 
         <GridContainer title="Achivements" extraClass="col-span-4">
@@ -197,21 +229,4 @@
             </div>
         </GridContainer>
     </div>
-    <!-- <div class="bg-slate-400 overflow-hidden transition-all duration-700 ease-in-out h-screen">
-        <div>
-            <h3 class="text-lg font-semibold my-4">Parsed CSV Data</h3>
-        </div>
-
-        {#if csvData.length > 0}
-            {#each csvData as row}
-                <div>{row.name}</div>
-            {/each}
-        {/if}
-
-        {#if csvData.length > 0}
-            <div>
-                <pre>{JSON.stringify(csvData, null, 2)}</pre>
-            </div>
-        {/if}
-    </div> -->
 {/if}

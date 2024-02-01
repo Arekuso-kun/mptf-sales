@@ -1,13 +1,34 @@
 <script lang="ts">
-  import { Chart, Button, Dropdown, DropdownItem } from 'flowbite-svelte';
-  import { ChevronDownSolid } from 'flowbite-svelte-icons';
+  import { Chart, Button, ButtonGroup } from 'flowbite-svelte';
+
+  export let items_daily: [string[], number[], number[]]; 
+  export let items_monthly: [string[], number[], number[]]; 
+  export let items_yearly: [string[], number[], number[]]; 
+
+  let statusDaily: boolean;
+  let statusMonthly: boolean;
+  let statusYear: boolean;
+
+  let items: [string[], number[], number[]] = [[], [], []]; 
+  
+  let selectedData = 'monthly';
+
+  const handleDataChange = (value: string) => {
+    selectedData = value;
+  };
 
   const options: ApexCharts.ApexOptions = {
     chart: {
       height: 460,
-      type: 'area'
+      type: 'area',
+      zoom: {
+        enabled: true,
+        autoScaleYaxis: true // Enable auto scaling of y-axis on zoom
+      },
+      background: '#00000000'
     },
     theme: {
+      mode: 'dark',
       monochrome: {
         enabled: true,
         color: '#4f46e5'
@@ -32,16 +53,19 @@
       enabled: false
     },
     grid: {
-      show: false
+      borderColor: '#ffffff0f'
+    },
+    stroke: {
+      width: 3
     },
     series: [
       {
         name: 'Sales',
-        data: [20.95, 51.34, 31.18]
+        data: items[1]
       },
       {
         name: 'Items sold',
-        data: [40, 14, 97]
+        data: items[2]
       }
     ],
     legend: {
@@ -52,25 +76,64 @@
     },
     xaxis: {
       type: 'datetime',
-      categories: [1327359600000, 1327446000000, 1327532400000]
+      categories: items[0]
+    },
+    yaxis: {
+      axisBorder: {
+        show: true
+      },
+      axisTicks: {
+        show: true
+      }
     }
   };
+
+  $: {
+    statusDaily = false;
+    statusMonthly = false;
+    statusYear = false;
+    
+    if (selectedData == 'daily') {
+      items = items_daily;
+      statusDaily = true;
+      if (options.tooltip && options.tooltip.x) options.tooltip.x.format = 'dd MMM yyyy';
+    }
+    
+    if (selectedData == 'monthly') {
+      items = items_monthly;
+      statusMonthly = true;
+      if (options.tooltip && options.tooltip.x) options.tooltip.x.format = 'MMM yyyy';
+    }
+    
+    if (selectedData == 'yearly') {
+      items = items_yearly;
+      statusYear = true;
+      if (options.tooltip && options.tooltip.x) options.tooltip.x.format = 'yyyy';
+    }
+
+    options.series = [
+      { name: 'Sales', data: items[1] },
+      { name: 'Items sold', data: items[2] }
+    ];
+
+    if (options.xaxis) options.xaxis.categories = items[0];
+  }
 </script>
 
 <Chart class="text-slate-900" {options} />
 
-<div class="flex justify-between items-center pt-5">
-  <Button class="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 
-  text-center inline-flex items-center dark:hover:text-white bg-transparent hover:bg-transparent 
-  dark:bg-transparent dark:hover:bg-transparent focus:ring-transparent dark:focus:ring-transparent py-0">
-    Daily
-    <ChevronDownSolid class="w-2.5 m-2.5 ms-1.5" />
-  </Button>
-  <Dropdown class="w-40" offset={-6}>
-    <DropdownItem>Daily</DropdownItem>
-    <DropdownItem>Weekly</DropdownItem>
-    <DropdownItem>Monthly</DropdownItem>
-    <DropdownItem>Yearly</DropdownItem>
-  </Dropdown>
+<div class="flex justify-between items-center pt-5 pl-5">
+  <ButtonGroup>
+    <Button on:click={() => handleDataChange('daily')} disabled={statusDaily}>
+      Daily
+    </Button>
+  
+    <Button on:click={() => handleDataChange('monthly')} disabled={statusMonthly}>
+      Monthly
+    </Button>
+  
+    <Button on:click={() => handleDataChange('yearly')} disabled={statusYear}>
+      Yearly
+    </Button>
+  </ButtonGroup>
 </div>
-   
