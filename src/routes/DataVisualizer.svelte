@@ -24,15 +24,24 @@
     import type { CsvRow } from './data-analyzer';
 
     import { 
+        reformatDates,
+        formatDate,
         countDifferentDays, 
         countItemOccurrences, 
         getLastItemDayDifference, 
         getTotalFees, 
         getTotalSales,
-        getPriceSumAndItemCount } from './data-analyzer';
+        getPriceSumAndItemCount,
+        getMostExpensiveItem,
+        getMostSalesInOneDay,
+        getMostItemsSoldInOneDay } from './data-analyzer';
 
     let csvData: CsvRow[] = [];
     let fileName = "";
+
+    let mostExpensiveItem: CsvRow;
+    let mostSalesInOneDay: { sales: number, date: string };
+    let mostItemsSoldInOneDay: { items: number, date: string };
 
     let showDataButton: boolean = true;
 
@@ -118,12 +127,19 @@
     /**
      * Performs transition animation.
      */
-    const transitionAnimation = async() => {
+    const transition = async() => {
         animationHide = true;
         await sleep(1000);
         animationReveal = true;
         showDataToggle = true;
+        csvData = reformatDates(csvData);
     };
+
+    $: {
+        mostExpensiveItem = getMostExpensiveItem(csvData);
+        mostSalesInOneDay = getMostSalesInOneDay(csvData);
+        mostItemsSoldInOneDay = getMostItemsSoldInOneDay(csvData);
+    }
 </script>
 
 <div class="absolute top-2 right-2">
@@ -150,7 +166,7 @@
                 {/if}
             </Dropzone>
     
-            <GradientButton disabled={showDataButton} shadow color="purpleToBlue" size="xl" on:click={transitionAnimation}>
+            <GradientButton disabled={showDataButton} shadow color="purpleToBlue" size="xl" on:click={transition}>
                 Show data
             </GradientButton>
         </div>
@@ -223,9 +239,18 @@
         <GridContainer title="Achivements" extraClass="col-span-4">
             <BadgeCheckOutline slot="icon"/>
             <div class="space-y-6">
-                <Achivement text_achivement="Most sales in one day" text_value="$113.99" text_date="15 January 2022"/>
-                <Achivement text_achivement="Most items sold in one day" text_value="205 items" text_date="7 January 2022"/>
-                <Achivement text_achivement="Most expensive item sold" text_value="Nutcracker Mk.II War Paint (Factory New) - $2.54" text_date="29 August 2022"/>
+                <Achivement 
+                    text_achivement="Most sales in one day" 
+                    text_value="${mostSalesInOneDay.sales}" 
+                    text_date="{mostSalesInOneDay.date}"/>
+                <Achivement 
+                    text_achivement="Most items sold in one day" 
+                    text_value="{mostItemsSoldInOneDay.items} items" 
+                    text_date="{mostItemsSoldInOneDay.date}"/>
+                <Achivement 
+                    text_achivement="Most expensive item sold" 
+                    text_value="{mostExpensiveItem.name} - ${mostExpensiveItem.price.toFixed(2)}" 
+                    text_date="{mostExpensiveItem.date}"/>
             </div>
         </GridContainer>
     </div>

@@ -1,6 +1,7 @@
 <script lang="ts">
     import { Badge, Hr } from "flowbite-svelte";
     import { ClockSolid } from "flowbite-svelte-icons";
+    import { formatDate } from "./data-analyzer";
 
     export let text_achivement: String; 
     export let text_value: String; 
@@ -22,7 +23,7 @@
     <Badge color="indigo" border>
         <ClockSolid class="w-4 h-4 me-2" />
         <span class="text-lg">
-            {text_date}
+            {formatDate(new Date(text_date.toString()))}
         </span>
     </Badge>
 </div>

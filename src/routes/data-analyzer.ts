@@ -9,6 +9,28 @@ export interface CsvRow {
     fee: number;
 }
 
+
+/**
+ * Reformat the dates of the user's CSV data to ISO string format with UTC time
+ * @param data User's CSV data
+ * @returns User's CSV data with reformatted dates
+ */
+export function reformatDates(data: CsvRow[]): CsvRow[] {
+    let formatedData: CsvRow[] = data;
+
+    for (const item of formatedData) {
+        const date = new Date(item.date + ' UTC');
+
+        // Convert EST time to UTC time
+        date.setHours(date.getHours() + 5);
+
+        item.date = date.toISOString();
+    }
+
+    return formatedData;
+}
+
+
 /**
 * Counts every item occurrences 
 * @param data User's CSV data
@@ -36,6 +58,7 @@ export function countItemOccurrences(data: CsvRow[], numFirstElements?: number):
     return sortedOccurrences;
 }
 
+
 /**
  * Calculates the total sales
  * @param data User's CSV data
@@ -50,6 +73,7 @@ export function getTotalSales(data: CsvRow[]): number {
 
     return parseFloat(totalSales.toFixed(2));
 }
+
 
 /**
  * Calculates the total fees
@@ -66,6 +90,7 @@ export function getTotalFees(data: CsvRow[]): number {
     return parseFloat(totalFees.toFixed(2));
 }
 
+
 /**
  * Calculates the difference in days between the last item's date (the oldest one) and today's date
  * @param data User's CSV data
@@ -73,14 +98,13 @@ export function getTotalFees(data: CsvRow[]): number {
  */
 export function getLastItemDayDifference(data: CsvRow[]): number {
     const lastItemDate = new Date(data[data.length - 1].date);
-    
     const today = new Date();
-
     const differenceMs = today.getTime() - lastItemDate.getTime();
 
     // Convert the difference from milliseconds to days
     return Math.floor(differenceMs / (1000 * 60 * 60 * 24));
 }
+
 
 /**
  * Counts the number of different days
@@ -91,13 +115,15 @@ export function countDifferentDays(data: CsvRow[]): number {
     const uniqueDates = new Set<string>();
 
     for (const item of data) {
-        // Extracts only the day, month, and year
-        const dateWithoutTime = item.date.split(" ").slice(0, 3).join(" ").replaceAll(',', ''); 
-        uniqueDates.add(dateWithoutTime);
+        const date = new Date(item.date);
+        const dateString = date.toISOString().split("T")[0];
+
+        uniqueDates.add(dateString);
     }
 
     return uniqueDates.size;
 }
+
 
 /**
  * Calculates the sales and item sold aggregated by day, month, or year
@@ -143,11 +169,7 @@ export function getPriceSumAndItemCount(data: CsvRow[], aggregation: 'daily' | '
     const dateMap = new Map<string, { priceSum: number, itemCount: number }>();
 
     for (const item of data) {
-        const date = new Date(item.date + ' UTC');
-
-        // Convert EST time to UTC time
-        date.setHours(date.getHours() + 5);
-
+        const date = new Date(item.date);
         let dateString = dateToString(date, aggregation);
 
         // Ensure dateData is initialized with a default value if it doesn't exist in the map
@@ -183,4 +205,70 @@ export function getPriceSumAndItemCount(data: CsvRow[], aggregation: 'daily' | '
     }
 
     return [dates, priceSums, itemCounts];
+}
+
+/**
+ * Formats the given date into a string with the format "dd month yyyy"
+ * @param date The date to be formatted
+ * @returns The formatted date string
+ */
+export function formatDate(date: Date): string {
+    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    const day = date.getDate();
+    const month = months[date.getMonth()];
+    const year = date.getFullYear();
+    return `${day} ${month} ${year}`;
+}
+
+/**
+ * Finds and returns the most expensive item
+ * @param data User's CSV data
+ * @returns The CsvRow representing the most expensive item
+ */
+export function getMostExpensiveItem(data: CsvRow[]): CsvRow {
+    let mostExpensiveItem: CsvRow = data[0]; 
+
+    for (let i = 1; i < data.length; i++) {
+        if (data[i].price > mostExpensiveItem.price) {
+            mostExpensiveItem = data[i];
+        }
+    }
+
+    return mostExpensiveItem;
+}
+
+/**
+ * Finds and returns the most sales in one day
+ * @param data User's CSV data
+ * @returns The CsvRow representing the most sales in one day
+ */
+export function getMostSalesInOneDay(data: CsvRow[]): { sales: number, date: string } {
+    let dataDaily = getPriceSumAndItemCount(data, 'daily');
+    let mostSalesInOneDay = { sales: dataDaily[1][0], date: dataDaily[0][0] };
+
+    for (let i = 1; i < data.length; i++) {
+        if (dataDaily[1][i] > mostSalesInOneDay.sales) {
+            mostSalesInOneDay = { sales: dataDaily[1][i], date: dataDaily[0][i] };
+        }
+    }
+
+    return mostSalesInOneDay;
+}
+
+/**
+ * Finds and returns the most items sold in one day
+ * @param data User's CSV data
+ * @returns The CsvRow representing the most items sold in one day
+ */
+export function getMostItemsSoldInOneDay(data: CsvRow[]): { items: number, date: string } {
+    let dataDaily = getPriceSumAndItemCount(data, 'daily');
+    let mostItemsSoldInOneDay = { items: dataDaily[2][0], date: dataDaily[0][0] };
+
+    for (let i = 1; i < data.length; i++) {
+        if (dataDaily[2][i] > mostItemsSoldInOneDay.items) {
+            mostItemsSoldInOneDay = { items: dataDaily[2][i], date: dataDaily[0][i] };
+        }
+    }
+
+    return mostItemsSoldInOneDay;
 }
