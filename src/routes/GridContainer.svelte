@@ -16,7 +16,7 @@
                 <slot name="icon"/>
             </span>
         </div>
-        <Hr classHr="h-px my-4 bg-slate-200 border-0 dark:bg-slate-700" />
+        <Hr classHr="h-px my-4 border-0 bg-slate-700" />
     </div>
     <slot/>
 </div>

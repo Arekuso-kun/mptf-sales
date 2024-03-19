@@ -1,6 +1,5 @@
 <script lang="ts">
     import { 
-        DarkMode, 
         GradientButton, 
         Dropzone, 
         Popover, 
@@ -143,9 +142,7 @@
     }
 </script>
 
-<div class="absolute top-2 right-2">
-    <DarkMode />
-</div>
+
 
 <div class="flex flex-col justify-center transition-all duration-1000 ease-in-out {animationReveal ? "h-0" : "h-screen"}">
     <div class="flex flex-col items-center justify-center overflow-hidden transition-all duration-1000 ease-in-out 
@@ -161,7 +158,7 @@
             </div>
             <Popover triggeredBy="#b-how" placement="bottom-start">
                 <div class="p-3 space-y-2">
-                  <h3 class="font-semibold text-gray-900 dark:text-white">How do I get the file?</h3>
+                  <h3 class="font-semibold text-white">How do I get the file?</h3>
                   <List list="decimal">
                     <Li>Go to <a class="font-semibold underline text-indigo-400 hover:text-indigo-500" href="https://marketplace.tf/dashboard#sales">marketplace.tf/dashboard#sales</a></Li>
                     <Li>Click 'Download CSV'</Li>
@@ -176,7 +173,7 @@
                 on:change={handleFileChange}>
                 <svg aria-hidden="true" class="mb-3 w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
                 {#if csvData.length === 0}
-                    <p class="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                    <p class="mb-2 text-sm text-gray-400">
                         <span class="font-semibold">Click to upload</span> or drag and drop
                     </p>
                 {:else}
@@ -239,7 +236,7 @@
                 </button>
                 <Popover triggeredBy="#b-active-days" placement="bottom-start">
                     <div class="p-3 space-y-2">
-                      <h3 class="font-semibold text-gray-900 dark:text-white">Active days</h3>
+                      <h3 class="font-semibold text-white">Active days</h3>
                       These are days with at least one item sold.
                     </div>
                 </Popover>
